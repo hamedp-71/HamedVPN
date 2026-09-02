@@ -18,13 +18,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # تبدیل سکرت SIGNING_KEY به فایل فیزیکی برای گریدل
       - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1.2  # استفاده از نسخه 1.2 که پایدارتر است
-        with:
-          fileName: 'mehmmet.jks'
-          encodedString: ${{ secrets.SIGNING_KEY }}
+        run: |
+          if [ -z "${{ secrets.SIGNING_KEY }}" ]; then
+            echo "Error: SIGNING_KEY is missing in Secrets!"
+            exit 1
+          fi
+          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > app/mehmmet.jks
 
       - name: Download libv2ray.aar
         run: |
@@ -33,8 +33,8 @@ jobs:
 
       - name: Build with Gradle
         env:
-          # استفاده از مسیر فایلی که اکشن بالا تولید کرده است
-          RELEASE_STORE_FILE: ${{ steps.decode_keystore.outputs.filePath }}
+          # مسیر فایل را مستقیم می‌دهیم چون در مرحله قبل در app/mehmmet.jks ذخیره کردیم
+          RELEASE_STORE_FILE: "mehmmet.jks"
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
