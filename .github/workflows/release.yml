@@ -22,32 +22,48 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Generate Gradle Wrapper if missing
+      - name: Inspect and Fix Project Structure
         run: |
-          if [ ! -f "gradlew" ]; then
-            echo "Gradlew not found, generating wrapper..."
-            gradle wrapper
+          echo "=== لیست تمام فایل‌های موجود در ریپازیتوری ==="
+          ls -la
+          
+          # اگر فایل settings.gradle در ریشه نبود، چک می‌کند آیا در پوشه داخلی است یا خیر
+          PROJECT_DIR="."
+          if [ ! -f "settings.gradle" ] && [ ! -f "settings.gradle.kts" ] && [ ! -f "build.gradle" ]; then
+            FOUND_DIR=$(find . -maxdepth 2 -name "settings.gradle" -o -name "settings.gradle.kts" | head -n 1 | xargs -r dirname)
+            if [ -n "$FOUND_DIR" ]; then
+              echo "پروژه در پوشه $FOUND_DIR پیدا شد!"
+              PROJECT_DIR="$FOUND_DIR"
+            else
+              echo "فایل settings.gradle پیدا نشد! در حال ساخت فایل پیش‌فرض..."
+              echo "include ':app'" > settings.gradle
+            fi
           fi
-          chmod +x gradlew
+          echo "TARGET_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
       - name: Download libv2ray.aar
         run: |
-          mkdir -p app/libs
-          curl -L "https://github.com/2dust/AndroidLibXrayLite/releases/download/v26.7.5/libv2ray.aar" -o app/libs/libv2ray.aar
+          mkdir -p $TARGET_DIR/app/libs
+          curl -L "https://github.com/2dust/AndroidLibXrayLite/releases/download/v26.7.5/libv2ray.aar" -o $TARGET_DIR/app/libs/libv2ray.aar
 
-      - name: Build Release APK
+      - name: Build with Gradle
+        working-directory: ${{ env.TARGET_DIR }}
         env:
           RELEASE_STORE_FILE: "mehmmet.jks"
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
+          if [ ! -f "gradlew" ]; then
+            gradle wrapper
+          fi
+          chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK to Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: app/build/outputs/apk/release/*.apk
+          files: ${{ env.TARGET_DIR }}/app/build/outputs/apk/release/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
