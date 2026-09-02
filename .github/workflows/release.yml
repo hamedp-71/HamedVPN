@@ -10,32 +10,41 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Gradle Wrapper if missing
+        run: |
+          if [ ! -f "gradlew" ]; then
+            echo "Gradlew not found, generating wrapper..."
+            gradle wrapper
+          fi
+          chmod +x gradlew
 
       - name: Download libv2ray.aar
         run: |
           mkdir -p app/libs
           curl -L "https://github.com/2dust/AndroidLibXrayLite/releases/download/v26.7.5/libv2ray.aar" -o app/libs/libv2ray.aar
 
-      - name: Build with Gradle
+      - name: Build Release APK
         env:
           RELEASE_STORE_FILE: "mehmmet.jks"
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        # استفاده از 'gradle' به جای './gradlew' چون فایلش را نداری
-        run: gradle assembleRelease --stacktrace
+        run: |
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Create Release
+      - name: Upload APK to Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
