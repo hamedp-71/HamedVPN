@@ -14,11 +14,9 @@
 ---
 
 🌐 Language Selection | انتخاب زبان
-
-· 🇬🇧 English
-
+**[🇬🇧 English](https://github.com/hamedp-71/hamedvpn/blob/main/ReadmeFa.md)**
 **[ 🇮🇷 فارسی](https://github.com/hamedp-71/hamedvpn/blob/main/ReadmeFa.md)**
-·
+
 
 </details>
 
