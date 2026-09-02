@@ -141,6 +141,8 @@ dependencies {
     // Core Libraries
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
 
+    implementation files('libs/libv2ray.aar')
+
     // AndroidX Core Libraries
     implementation(libs.androidx.core.ktx)
 
