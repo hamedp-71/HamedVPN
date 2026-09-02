@@ -1,10 +1,18 @@
-name: Android Release
+name: Android Build & Release
 
+# اجرا شدن با هر تغییر روی main، با هر تگ، یا به صورت دستی
 on:
   push:
+    branches:
+      - main
+      - master
     tags:
-      - 'v*'
+      - '1.0.0*'
   workflow_dispatch:
+
+# دسترسی برای ساخت Release رسمی در گیت‌هاب
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -35,20 +43,16 @@ jobs:
           fi
           echo "TARGET_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
-      # تست هوشمند پسوردها و اعتبارسنجی خودکار کلید
       - name: Verify or Fix Keystore
         run: |
           KEY_PATH="${{ env.TARGET_DIR }}/app/mehmmet.jks"
           KEY_ALIAS="mehmmetvpn"
           
           if [ -f "$KEY_PATH" ] && keytool -list -keystore "$KEY_PATH" -storepass "MEHMMETT.2002" -alias "$KEY_ALIAS" >/dev/null 2>&1; then
-            echo "پسورد MEHMMETT.2002 تایید شد."
             echo "SIGN_PASS=MEHMMETT.2002" >> $GITHUB_ENV
           elif [ -f "$KEY_PATH" ] && keytool -list -keystore "$KEY_PATH" -storepass "MEHMMET.2002" -alias "$KEY_ALIAS" >/dev/null 2>&1; then
-            echo "پسورد MEHMMET.2002 تایید شد."
             echo "SIGN_PASS=MEHMMET.2002" >> $GITHUB_ENV
           else
-            echo "کلید موجود باز نشد. در حال ساخت کلید معتبر و تازه برای جلوگیری از توقف بیلد..."
             mkdir -p "${{ env.TARGET_DIR }}/app"
             rm -f "$KEY_PATH"
             keytool -genkeypair -v -keystore "$KEY_PATH" -alias "$KEY_ALIAS" -keyalg RSA -keysize 2048 -validity 10000 -storepass "MEHMMET.2002" -keypass "MEHMMET.2002" -dname "CN=HamedVPN, OU=App, O=Hamed, L=Tehran, ST=Tehran, C=IR"
@@ -74,7 +78,15 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Upload All APKs to Release
+      # دانلود مستقیم APKها در تب Actions (بدون نیاز به تگ)
+      - name: Upload APKs as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HamedVPN-APKs
+          path: ${{ env.TARGET_DIR }}/app/build/outputs/apk/**/*.apk
+
+      # ساخت Release رسمی اگر تگی ثبت شده باشد
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
