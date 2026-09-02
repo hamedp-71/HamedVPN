@@ -9,11 +9,11 @@ android {
     ...
     signingConfigs {
         release {
-            // خواندن اطلاعات از Environment Variables که در فایل YAML ست کردیم
-            storeFile = file(System.getenv("RELEASE_STORE_FILE") ?: "debug.keystore")
-            storePassword = System.getenv("RELEASE_STORE_PASSWORD")
-            keyAlias = System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+            // این فایل در مرحله Decode ساخته می‌شود
+            storeFile file("mehmmet.jks") 
+            storePassword System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword System.getenv("RELEASE_KEY_PASSWORD")
         }
     }
 
