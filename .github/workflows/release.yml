@@ -1,0 +1,57 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Decode Keystore
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          import os
+          import base64
+          raw_data = os.environ.get('SIGNING_KEY', '')
+          if not raw_data:
+              print("SIGNING_KEY secret is missing")
+              exit(1)
+          # Clean all whitespace/newlines and decode
+          clean_data = "".join(raw_data.split())
+          with open("app/release-key.jks", "wb") as f:
+              f.write(base64.b64decode(clean_data))
+        shell: python
+
+      - name: Download libv2ray.aar
+        run: |
+          mkdir -p app/libs
+          curl -L "https://github.com/2dust/AndroidLibXrayLite/releases/download/v26.7.5/libv2ray.aar" -o app/libs/libv2ray.aar
+
+      - name: Build with Gradle
+        env:
+          RELEASE_STORE_FILE: "release-key.jks"
+          RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
