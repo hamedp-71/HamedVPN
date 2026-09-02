@@ -23,17 +23,9 @@ jobs:
           mkdir -p app/libs
           curl -L "https://github.com/2dust/AndroidLibXrayLite/releases/download/v26.7.5/libv2ray.aar" -o app/libs/libv2ray.aar
 
-      - name: Decode Keystore
-        run: |
-          # اینجا مستقیماً چک می‌کنیم سکرت وجود دارد یا نه
-          if [ -z "${{ secrets.SIGNING_KEY }}" ]; then
-            echo "ERROR: SIGNING_KEY is empty in GitHub Secrets!"
-            exit 1
-          fi
-          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > app/mehmmet.jks
-
       - name: Build with Gradle
         env:
+          # چون فایل در پوشه app هست، گریدل مستقیم آن را می‌بیند
           RELEASE_STORE_FILE: "mehmmet.jks"
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
