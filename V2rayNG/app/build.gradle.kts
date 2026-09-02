@@ -21,10 +21,9 @@ android {
 signingConfigs {
         create("release") {
             storeFile = file("mehmmet.jks")
-            // خواندن با اولویت سکرت، و در صورت خالی بودن استفاده از اطلاعات اصلی کلید
-            storePassword = System.getenv("RELEASE_STORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: "MEHMMETT.2002"
+            storePassword = System.getenv("RELEASE_STORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: "MEHMMET.2002"
             keyAlias = System.getenv("RELEASE_KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "mehmmetvpn"
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "MEHMMETT.2002"
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "MEHMMET.2002"
         }
     }
 
