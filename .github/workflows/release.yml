@@ -1,14 +1,20 @@
 name: Android Release (v2rayNG Style)
 
 on:
-  # اجرا شدن هنگام انتشار یک Release جدید در سایت گیت‌هاب
   release:
     types: [published]
-  # اجرا شدن هنگام ثبت تگ
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+      - master
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'نام تگ برای نسخه (مثلا v1.0.0)'
+        required: false
+        default: 'v1.0.0'
 
 permissions:
   contents: write
@@ -77,10 +83,19 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
 
-      # الصاق تمام فایل‌های APK تفکیک‌شده به همان Release
+      # ذخیره APKها در بخش Artifacts برای دانلود سریع
+      - name: Upload APKs as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HamedVPN-All-APKs
+          path: ${{ env.TARGET_DIR }}/app/build/outputs/apk/**/*.apk
+
+      # انتشار فایل‌ها در بخش Releases
       - name: Upload APKs to GitHub Release
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
           files: ${{ env.TARGET_DIR }}/app/build/outputs/apk/**/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
