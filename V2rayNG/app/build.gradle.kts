@@ -6,24 +6,37 @@ plugins {
 }
 
 android {
-    ...
+    namespace = "com.v2ray.ang"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.v2ray.ang"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0.0"
+        multiDexEnabled = true
+    }
+
     signingConfigs {
-        release {
-            storeFile file("mehmmet.jks")
-            storePassword System.getenv("RELEASE_STORE_PASSWORD")
-            keyAlias System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+        create("release") {
+            storeFile = file("mehmmet.jks")
+            storePassword = System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias = System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
-}
 
     flavorDimensions.add("distribution")
     productFlavors {
@@ -111,14 +124,11 @@ android {
             useLegacyPackaging = true
         }
     }
-
 }
 
 dependencies {
     // Core Libraries
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
-
-    implementation files('libs/libv2ray.aar')
 
     // AndroidX Core Libraries
     implementation(libs.androidx.core.ktx)
