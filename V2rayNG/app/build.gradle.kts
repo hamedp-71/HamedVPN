@@ -9,8 +9,7 @@ android {
     ...
     signingConfigs {
         release {
-            // این فایل در مرحله Decode ساخته می‌شود
-            storeFile file("mehmmet.jks") 
+            storeFile file("mehmmet.jks")
             storePassword System.getenv("RELEASE_STORE_PASSWORD")
             keyAlias System.getenv("RELEASE_KEY_ALIAS")
             keyPassword System.getenv("RELEASE_KEY_PASSWORD")
