@@ -19,7 +19,8 @@
 <summary><b>🇬🇧 English</b></summary>
 
 · 🇬🇧 English
-· 🇮🇷 فارسی
+**[ 🇮🇷 فارسی](https://github.com/hamedp-71/hamedvpn/blob/main/ReadmeFa.md)**
+·
 
 </details>
 
