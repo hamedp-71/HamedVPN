@@ -18,7 +18,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      # استفاده از اکشن رسمی گریدل برای نصب و اجرای بهتر
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
@@ -33,7 +32,7 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        # استفاده از دستور مستقیم gradle
+        # استفاده از 'gradle' به جای './gradlew' چون فایلش را نداری
         run: gradle assembleRelease --stacktrace
 
       - name: Create Release
