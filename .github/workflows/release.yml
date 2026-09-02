@@ -25,7 +25,7 @@ jobs:
 
       - name: Build with Gradle
         env:
-          # چون فایل داخل پوشه app است، مستقیم اسمش را می‌نویسیم
+          # چون فایل را در مرحله قبل آپلود کردیم، اینجا مستقیم از آن استفاده می‌کنیم
           RELEASE_STORE_FILE: "mehmmet.jks"
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
