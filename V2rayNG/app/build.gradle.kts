@@ -18,7 +18,17 @@ android {
         multiDexEnabled = true
     }
 
-signingConfigs {
+    // این بخش تفکیک پردازنده‌ها را فعال می‌کند
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true
+        }
+    }
+
+    signingConfigs {
         create("release") {
             storeFile = file("mehmmet.jks")
             storePassword = System.getenv("RELEASE_STORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: "MEHMMET.2002"
@@ -26,6 +36,7 @@ signingConfigs {
             keyPassword = System.getenv("RELEASE_KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "MEHMMET.2002"
         }
     }
+    // ... بقیه فایل دست‌نخورده باقی بماند
 
     buildTypes {
         release {
