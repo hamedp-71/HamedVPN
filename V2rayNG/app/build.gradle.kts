@@ -18,12 +18,13 @@ android {
         multiDexEnabled = true
     }
 
-    signingConfigs {
+signingConfigs {
         create("release") {
             storeFile = file("mehmmet.jks")
-            storePassword = System.getenv("RELEASE_STORE_PASSWORD")
-            keyAlias = System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+            // اگر سکرت پیدا نشد، به صورت پیش‌فرض از این مقادیر استفاده کن
+            storePassword = System.getenv("RELEASE_STORE_PASSWORD") ?: "MEHMMET.2002"
+            keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: "mehmmetvpn"
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD") ?: "MEHMMET.2002"
         }
     }
 
