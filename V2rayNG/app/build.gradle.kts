@@ -6,47 +6,25 @@ plugins {
 }
 
 android {
-    namespace = "com.v2ray.ang"
-    compileSdk = 37
-
-    defaultConfig {
-        applicationId = "com.Doci.vpn"
-        minSdk = 24
-        targetSdk = 37
-        versionCode = 736
-        versionName = "2.2.6"
-
-        val abiFilterList = (properties["ABI_FILTERS"] as? String)?.split(';')
-        splits {
-            abi {
-                isEnable = true
-                reset()
-                if (!abiFilterList.isNullOrEmpty()) {
-                    include(*abiFilterList.toTypedArray())
-                } else {
-                    include(
-                        "arm64-v8a",
-                        "armeabi-v7a",
-                        "x86_64",
-                        "x86"
-                    )
-                }
-                isUniversalApk = abiFilterList.isNullOrEmpty()
-            }
+    ...
+    signingConfigs {
+        release {
+            // خواندن اطلاعات از Environment Variables که در فایل YAML ست کردیم
+            storeFile = file(System.getenv("RELEASE_STORE_FILE") ?: "debug.keystore")
+            storePassword = System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias = System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
         }
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
 
     flavorDimensions.add("distribution")
     productFlavors {
