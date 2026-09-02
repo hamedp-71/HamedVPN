@@ -15,10 +15,8 @@
 
 🌐 Language Selection | انتخاب زبان
 
-<details>
-<summary><b>🇬🇧 English</b></summary>
-
 · 🇬🇧 English
+
 **[ 🇮🇷 فارسی](https://github.com/hamedp-71/hamedvpn/blob/main/ReadmeFa.md)**
 ·
 
