@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch: # این خط باعث می‌شود دکمه اجرای دستی اضافه شود
 
 jobs:
   build:
