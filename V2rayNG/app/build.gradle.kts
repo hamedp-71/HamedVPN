@@ -6,11 +6,14 @@ plugins {
 }
 
 android {
+    // مقدار namespace را دست نزن تا کدهای برنامه و R.java ارور ندهند
     namespace = "com.v2ray.ang"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.v2ray.ang"
+        // شناسه اختصاصی و منحصربه‌فرد برای HamedVPN
+        applicationId = "com.hamedvpn.app" // شناسه جدید که هیچ تداخلی ایجاد نمی‌کند
+        
         minSdk = 26
         targetSdk = 34
         versionCode = 1
