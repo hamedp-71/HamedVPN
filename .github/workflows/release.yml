@@ -95,8 +95,8 @@ jobs:
             gradle wrapper
           fi
           chmod +x gradlew
-          # ساخت نسخه‌های تمیز اصلی
-          ./gradlew assemblePlaystoreRelease --no-daemon --stacktrace
+          # تغییر برای ساخت هر دو نسخه اصلی و F-Droid (جمعاً ۱۰ فایل)
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APKs to GitHub Release
         uses: softprops/action-gh-release@v2
