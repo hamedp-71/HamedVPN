@@ -58,10 +58,13 @@ android {
             dimension = "distribution"
             applicationIdSuffix = ".fdroid"
             buildConfigField("String", "DISTRIBUTION", "\"F-Droid\"")
+            // این خط نام نسخه F-Droid را هم به HamedVPN تغییر می‌دهد
+            resValue("string", "app_name", "HamedVPN")
         }
         create("playstore") {
             dimension = "distribution"
             buildConfigField("String", "DISTRIBUTION", "\"Play Store\"")
+            resValue("string", "app_name", "HamedVPN")
         }
     }
 
