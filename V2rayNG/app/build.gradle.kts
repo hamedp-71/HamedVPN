@@ -6,22 +6,22 @@ plugins {
 }
 
 android {
-    // مقدار namespace را دست نزن تا کدهای برنامه و R.java ارور ندهند
     namespace = "com.v2ray.ang"
     compileSdk = 37
 
+    // دریافت خودکار نسخه از تگ گیت‌هاب
+    val appVerName = System.getenv("APP_VERSION_NAME")?.takeIf { it.isNotBlank() } ?: "1.0.0"
+    val appVerCode = System.getenv("APP_VERSION_CODE")?.toIntOrNull() ?: 1
+
     defaultConfig {
-        // شناسه اختصاصی و منحصربه‌فرد برای HamedVPN
-        applicationId = "com.hamedvpn.app" // شناسه جدید که هیچ تداخلی ایجاد نمی‌کند
-        
+        applicationId = "com.hamedvpn.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVerCode
+        versionName = appVerName
         multiDexEnabled = true
     }
 
-    // این بخش تفکیک پردازنده‌ها را فعال می‌کند
     splits {
         abi {
             isEnable = true
